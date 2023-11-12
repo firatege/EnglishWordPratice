@@ -1,14 +1,60 @@
 package main
 
-import "math/rand"
+import (
+	"bufio"
+	"fmt"
+	"math/rand"
+	"os"
+	"strings"
+)
 
-func randomSeleceter(keys []string) string { //Selects a string randomly in slice
+func DeleteformArray(array []string, word string) {
+	// Silmek istediğiniz eleman
+	elementToDelete := word
 
-	return keys[rand.Intn(len(keys))]
+	// Belirli bir elemanı sil
+	indexToDelete := -1
+	for i, value := range array {
+		if value == elementToDelete {
+			indexToDelete = i
+			break
+		}
+	}
+
+	if indexToDelete != -1 {
+		array = append(array[:indexToDelete], array[indexToDelete+1:]...)
+		fmt.Printf("%s elemanı silindi.\n", elementToDelete)
+	} else {
+		fmt.Printf("%s elemanı bulunamadı.\n", elementToDelete)
+	}
+
+	// Sonucu yazdır
+	fmt.Println("Yeni string dizisi:", array)
+	fmt.Println("Yeni dizi boyutui: ", len(array))
 }
 
-func checkAndRemoveAnswer(word string, table map[string]string) {
+func checkAndRemoveAnswer(table map[string]string, keys []string) {
+	word := keys[rand.Intn(len(keys))]            //RANDOM WORD
+	fmt.Printf("%s kelimesinin turkcesi: ", word) //İNPUT
+	// bufio.Scanner kullanarak bir satır okuma yapılır
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		answer := scanner.Text()
 
+		// Kullanıcının girişini temizle
+		cleanedAnswer := strings.ToLower(strings.TrimSpace(answer))
+
+		if cleanedAnswer == strings.ToLower(table[word]) {
+			fmt.Println("Doğru Cevap")
+			DeleteformArray(keys, word)
+		} else {
+			fmt.Println("Yanlış Cevap!")
+		}
+	} else {
+		fmt.Println("Giriş Hatası:", scanner.Err())
+	}
+
+	checkAndRemoveAnswer(table, keys)
 }
 
 func main() {
@@ -52,5 +98,5 @@ func main() {
 	for key := range table {
 		keys = append(keys, key)
 	}
-	println(randomSeleceter(keys))
+	checkAndRemoveAnswer(table, keys)
 }
