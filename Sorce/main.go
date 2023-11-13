@@ -8,32 +8,29 @@ import (
 	"strings"
 )
 
-func DeleteformArray(array []string, word string) {
-	// Silmek istediğiniz eleman
-	elementToDelete := word
+func DeleteformArray(array []string, word string) []string { //This func is about delete every word uses
+	index := -1
+	for i := 0; i < len(array); i++ {
 
-	// Belirli bir elemanı sil
-	indexToDelete := -1
-	for i, value := range array {
-		if value == elementToDelete {
-			indexToDelete = i
+		if array[i] == word {
+			index = i
 			break
 		}
 	}
+	if index == 0 {
+		return array[1:]
+	} else if index == len(array)-1 {
 
-	if indexToDelete != -1 {
-		array = append(array[:indexToDelete], array[indexToDelete+1:]...)
-		fmt.Printf("%s elemanı silindi.\n", elementToDelete)
+		return array[:len(array)-1]
 	} else {
-		fmt.Printf("%s elemanı bulunamadı.\n", elementToDelete)
-	}
 
-	// Sonucu yazdır
-	fmt.Println("Yeni string dizisi:", array)
-	fmt.Println("Yeni dizi boyutui: ", len(array))
+		a := array[index+1:]
+		b := array[:(index)]
+		return append(a, b...)
+	}
 }
 
-func checkAndRemoveAnswer(table map[string]string, keys []string) {
+func checkAndRemoveAnswer(table map[string]string, keys []string) { // THİS func is about ask the quetsion and take input from user
 	word := keys[rand.Intn(len(keys))]            //RANDOM WORD
 	fmt.Printf("%s kelimesinin turkcesi: ", word) //İNPUT
 	// bufio.Scanner kullanarak bir satır okuma yapılır
@@ -45,8 +42,10 @@ func checkAndRemoveAnswer(table map[string]string, keys []string) {
 		cleanedAnswer := strings.ToLower(strings.TrimSpace(answer))
 
 		if cleanedAnswer == strings.ToLower(table[word]) {
+			fmt.Println("SİMDİKİ array:", keys)
 			fmt.Println("Doğru Cevap")
-			DeleteformArray(keys, word)
+			keys = DeleteformArray(keys, word)
+			fmt.Println("SONRAKİ array:", keys)
 		} else {
 			fmt.Println("Yanlış Cevap!")
 		}
@@ -62,7 +61,7 @@ func main() {
 	var table = map[string]string{
 		"Although":        "Gerçi",
 		"Borrows":         "Ödünç & alır",
-		"Relatives":       " Akrabalar",
+		"Relatives":       "Akrabalar",
 		"Straightforward": "Doğrudan",
 		"Initially":       "İlk olarak",
 		"Purpose":         "Amaç",
